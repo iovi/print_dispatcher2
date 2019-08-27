@@ -5,6 +5,26 @@ import java.util.*;
 public class PrintDispatcherImpl implements PrintDispatcher {
     LinkedList<Document> documents;
     Printer printer;
+    Object lock;
+
+    private boolean addToDocuments(Document document){
+        synchronized (lock){
+            return documents.add(document);
+        }
+    }
+
+    private boolean removeFromDocuments(Document document){
+        synchronized (lock){
+            if (documents.getFirst()==document)
+                return false;
+            else{
+                documents.remove(document);
+                return true;
+            }
+        }
+    }
+
+
 
     public PrintDispatcherImpl(Printer printer){
         this.printer=printer;
@@ -30,7 +50,6 @@ public class PrintDispatcherImpl implements PrintDispatcher {
     }
 
     public void print(Document document) {
-        documents.add(document);
-
+        addToDocuments(document);
     }
 }
