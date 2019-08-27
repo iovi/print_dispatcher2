@@ -1,13 +1,11 @@
 import iovi.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.print.Doc;
 import java.util.List;
 
 
-public class PrintDispatcherImplTest {
+public class ThreadSafeDispatcherTest {
     DocumentType vacationApplication;
 
     @Before
@@ -36,10 +34,10 @@ public class PrintDispatcherImplTest {
         Document vacationOnischenko=new Document(vacationApplication,"Onischenko Vacation 30.08.19",
                 new String[]{"I, Onischenko","cannot work anymore","from 30.08.19"});
 
-        PrintDispatcher printDispatcher=new PrintDispatcherImpl(new ConsolePrinter());
+        PrintDispatcher dispatcher=new ThreadSafeDispatcher(new ConsolePrinter());
         try{
-            printDispatcher.print(vacationOnischenko);
-            Thread.sleep(vacationApplication.getPrintDuration());/*
+            //dispatcher.print(vacationOnischenko);
+            Thread.sleep(10000);/*
             List<Document> docs=printDispatcher.getPrinted(SortingType.BY_DOCUMENT_TYPE);
             Assert.assertTrue(isDocumentInList(docs,vacationOnischenko));
 

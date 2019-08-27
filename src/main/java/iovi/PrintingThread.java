@@ -5,18 +5,24 @@ import java.util.LinkedList;
 public class PrintingThread extends Thread{
 
     Printer printer;
-    LinkedList<Document> docs;
-    public PrintingThread(Printer printer, LinkedList<Document> docs){
+    ThreadSafeDocumentService documentService;
+    public PrintingThread(Printer printer, ThreadSafeDocumentService documentService){
         this.printer=printer;
-        this.docs=docs;
+        this.documentService=documentService;
     }
 
     public void run() {
+        System.out.print("try to try");
         try{
-            while(docs.size()!=0){
-                printer.print(docs.getFirst());
-                Thread.sleep(docs.getFirst().getType().getPrintDuration());
-                docs.removeFirst();
+            while(!Thread.currentThread().interrupted()){
+                Document document=documentService.pollDocument();
+
+                if (document!=null){
+                    System.out.print("doc is not null");
+                    printer.print(document);
+                    Thread.sleep(document.getType().getPrintDuration());
+                } else
+                    System.out.print("doc is null");
             }
         }catch(InterruptedException e){
             System.err.print("custom error: "+e.getMessage());
