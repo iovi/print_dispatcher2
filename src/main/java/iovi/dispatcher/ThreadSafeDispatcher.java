@@ -1,7 +1,12 @@
-package iovi;
+package iovi.dispatcher;
+
+import iovi.PrintingThread;
+import iovi.document.Document;
+import iovi.printer.Printer;
 
 import java.util.*;
 
+/**Класс диспетчера печати для использования извне*/
 public class ThreadSafeDispatcher implements PrintDispatcher, ThreadSafeDocumentService {
     LinkedList<Document> documents;
     ArrayList<Document> printed;
@@ -19,19 +24,21 @@ public class ThreadSafeDispatcher implements PrintDispatcher, ThreadSafeDocument
 
     }
 
-
+    /**Реализация {@link ThreadSafeDocumentService#addDocument(Document)}, работает аналогично {@link LinkedList#add(Object)} */
     public boolean addDocument(Document document){
         synchronized (lock){
             return documents.add(document);
         }
     }
 
+    /**Реализация {@link ThreadSafeDocumentService#removeDocumentByObject(Document)}, работает аналогично {@link LinkedList#remove()} */
     public boolean removeDocumentByObject (Document document){
         synchronized (lock){
             return documents.remove(document);
         }
     }
 
+    /**Реализация {@link ThreadSafeDocumentService#pollDocument()}, работает аналогично {@link LinkedList#poll()}*/
     public Document pollDocument(){
         synchronized (lock){
             return documents.poll();
@@ -54,6 +61,7 @@ public class ThreadSafeDispatcher implements PrintDispatcher, ThreadSafeDocument
         return documents;
     }
 
+    /**@return среднее время печати в мс*/
     public long getAveragePrintDuration() {
         if (printed.size()==0)
             return 0;
@@ -68,6 +76,5 @@ public class ThreadSafeDispatcher implements PrintDispatcher, ThreadSafeDocument
         boolean added=addDocument(document);
         if (added)
             printed.add(document);
-
     }
 }

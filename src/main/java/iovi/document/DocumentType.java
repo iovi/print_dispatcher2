@@ -1,5 +1,6 @@
-package iovi;
+package iovi.document;
 
+/**Класс типа документа*/
 public class DocumentType {
 
     String typeName;
@@ -7,6 +8,12 @@ public class DocumentType {
     int paperWidth;
     int printDuration;
 
+    /**
+     @param typeName название типа документа
+     @param paperHeight высота документа в мм
+     @param paperWidth ширина документа в мм
+     @param printDuration время печати документа в мс
+     */
     public DocumentType(String typeName, int paperHeight, int paperWidth, int printDuration) {
         this.typeName = typeName;
         this.paperHeight = paperHeight;
@@ -38,6 +45,7 @@ public class DocumentType {
         this.paperWidth = paperWidth;
     }
 
+    /**@return время печати в мс*/
     public int getPrintDuration() {
         return printDuration;
     }

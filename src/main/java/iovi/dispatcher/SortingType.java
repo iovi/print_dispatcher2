@@ -1,4 +1,4 @@
-package iovi;
+package iovi.dispatcher;
 
 public enum SortingType {
     BY_PRINT_ORDER,

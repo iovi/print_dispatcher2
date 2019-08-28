@@ -1,31 +1,42 @@
 package iovi;
 
-import java.util.LinkedList;
 
+import iovi.dispatcher.ThreadSafeDocumentService;
+import iovi.document.Document;
+import iovi.printer.Printer;
+
+/**Поток, выполняющий основную логику по печати документов:
+ * <ul>
+ *     <li>получение первого документа в очереди</li>
+ *     <li>вызов функции печати у принтера</li>
+ *     <li>ожидание конца печати (время печати известно из типа документа)</li>
+ *     <li>повторение предыдущих шагов</li>
+ * </ul>
+ */
 public class PrintingThread extends Thread{
 
     Printer printer;
     ThreadSafeDocumentService documentService;
+    /**@param printer принтер, который будет печатать документы
+     * @param documentService сервис для работы с документами,
+     * будет использоваться для потокобезопасного получения печатаемых документов*/
     public PrintingThread(Printer printer, ThreadSafeDocumentService documentService){
         this.printer=printer;
         this.documentService=documentService;
     }
 
     public void run() {
-        System.out.print("try to try");
         try{
             while(!Thread.currentThread().interrupted()){
                 Document document=documentService.pollDocument();
 
                 if (document!=null){
-                    System.out.print("doc is not null");
                     printer.print(document);
                     Thread.sleep(document.getType().getPrintDuration());
-                } else
-                    System.out.print("doc is null");
+                }
             }
         }catch(InterruptedException e){
-            System.err.print("custom error: "+e.getMessage());
+            System.err.println("application message: "+e.getMessage());
         }
 
     }

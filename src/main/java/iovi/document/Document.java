@@ -1,5 +1,6 @@
-package iovi;
+package iovi.document;
 
+/**Класс документа для печати*/
 public class Document {
 
     public DocumentType getType() {
