@@ -73,8 +73,11 @@ public class ThreadSafeDispatcher implements PrintDispatcher, ThreadSafeDocument
     }
 
     public void print(Document document) {
-        boolean added=addDocument(document);
-        if (added)
-            printed.add(document);
+        addDocument(document);
+    }
+
+
+    public boolean makePrinted(Document document) {
+        return printed.add(document);
     }
 }

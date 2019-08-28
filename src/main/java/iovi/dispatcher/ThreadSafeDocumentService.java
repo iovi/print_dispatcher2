@@ -14,5 +14,6 @@ public interface ThreadSafeDocumentService {
     /**Удаляет первый документ из списка (FIFO) и возвращает его. Если список пуст, возвращает null*/
     Document pollDocument();
 
-
+    /**Добавление документа в список напечатанных*/
+    boolean makePrinted(Document document);
 }

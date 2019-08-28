@@ -10,6 +10,7 @@ import iovi.printer.Printer;
  *     <li>получение первого документа в очереди</li>
  *     <li>вызов функции печати у принтера</li>
  *     <li>ожидание конца печати (время печати известно из типа документа)</li>
+ *     <li>помечает документ как напечатанный</li>
  *     <li>повторение предыдущих шагов</li>
  * </ul>
  */
@@ -33,6 +34,7 @@ public class PrintingThread extends Thread{
                 if (document!=null){
                     printer.print(document);
                     Thread.sleep(document.getType().getPrintDuration());
+                    documentService.makePrinted(document);
                 }
             }
         }catch(InterruptedException e){

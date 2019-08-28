@@ -22,7 +22,7 @@ public interface PrintDispatcher {
      */
     List<Document> getPrinted(SortingType sortingType);
 
-    /**Получение среднего времени печати*/
+    /**Получение среднего времени печати в мс. Возвращает 0, если ни один документ не напечатан*/
     long getAveragePrintDuration();
 
 
