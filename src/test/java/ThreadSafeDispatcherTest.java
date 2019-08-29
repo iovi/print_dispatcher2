@@ -1,4 +1,5 @@
 import iovi.dispatcher.PrintDispatcher;
+import iovi.dispatcher.SortingType;
 import iovi.dispatcher.ThreadSafeDispatcher;
 import iovi.document.Document;
 import iovi.document.DocumentType;
@@ -17,7 +18,7 @@ public class ThreadSafeDispatcherTest {
     public void setUpTypes(){
 
         vacationStatement = new DocumentType("vacation",297,210,1000);
-        resignationStatement = new DocumentType("resignation",210,297,2000);
+        resignationStatement = new DocumentType("resignation",210,148,2000);
     }
 
 
@@ -127,6 +128,64 @@ public class ThreadSafeDispatcherTest {
             Thread.sleep(vacationStatement.getPrintDuration()-1);
             Assert.assertTrue(dispatcher.abortPrinting(vacationSidorov));
             Assert.assertFalse(dispatcher.abortPrinting(vacationPetrov));
+
+        } catch (InterruptedException e){
+            Assert.fail();
+        }
+    }
+
+    /**
+     * <ul>
+     * <li>Отправляет на печать 4 документа с небольшими паузами, дожидается печати трех</li>
+     * <li>получает 4 списка напечатанных с разными порядками сортировки</li>
+     * <li>Проверяет, для каждого списка, что в нем 3 элемента, и порядок соответствует типу сортировки</li>
+     * </ul>
+     */
+    @Test
+    public void getPrintedTest(){
+        Document vacationSidorov=new Document(vacationStatement,"Sidorov Vacation 29.08.19",
+                new String[]{"I, Sidorov","Want a vacation very much","from 29.08.19, please"});
+
+        Document resignationSidorov=new Document(resignationStatement,"Sidorov Resignation 29.09.19",
+                new String[]{"I, Sidorov","Want a resignation very much","from 29.09.19, please"});
+
+        Document vacationPetrov=new Document(vacationStatement,"Petrov Vacation 21.08.19",
+                new String[]{"I, Petrov","Need some rest","from 21.08.19, please"});
+
+        Document vacationOnischenko=new Document(vacationStatement,"Onischenko Vacation 30.08.19",
+                new String[]{"I, Onischenko","cannot work anymore","from 30.08.19"});
+        PrintDispatcher dispatcher=new ThreadSafeDispatcher(new ConsolePrinter());
+        try{
+            dispatcher.print(vacationPetrov);
+            Thread.sleep(10);
+            dispatcher.print(vacationSidorov);
+            Thread.sleep(10);
+            dispatcher.print(resignationSidorov);
+            Thread.sleep(10);
+            dispatcher.print(vacationOnischenko);
+            Thread.sleep(vacationStatement.getPrintDuration()*2+resignationStatement.getPrintDuration() +30);
+            List<Document> printed1=dispatcher.getPrinted(SortingType.BY_PRINT_ORDER),
+                    printed2=dispatcher.getPrinted(SortingType.BY_DOCUMENT_TYPE),
+                    printed3=dispatcher.getPrinted(SortingType.BY_PAPER_FORMAT),
+                    printed4=dispatcher.getPrinted(SortingType.BY_PRINT_DURATION);
+
+            //BY_PRINT_ORDER
+            Assert.assertEquals(printed1.size(),3);
+            Assert.assertTrue(printed1.get(0)==vacationPetrov);
+            Assert.assertTrue(printed1.get(1)==vacationSidorov);
+            Assert.assertTrue(printed1.get(2)==resignationSidorov);
+
+            //BY_DOCUMENT_TYPE
+            Assert.assertEquals(printed2.size(),3);
+            Assert.assertTrue(printed2.get(0)==resignationSidorov);
+
+            //BY_PAPER_FORMAT
+            Assert.assertEquals(printed3.size(),3);
+            Assert.assertTrue(printed3.get(0)==resignationSidorov);
+
+            //BY_PRINT_DURATION
+            Assert.assertEquals(printed4.size(),3);
+            Assert.assertTrue(printed4.get(2)==resignationSidorov);
 
         } catch (InterruptedException e){
             Assert.fail();
